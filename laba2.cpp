@@ -16,6 +16,15 @@ Matrix::~Matrix() {                                                            /
     delete[] data;
 }
 
+Matrix::Matrix(const Matrix& other) {  //конструктор, инициализирует новый обЪект матрицы, класс предсталяет матрицу с базовыми операциями + - *
+    data = new int* [other.m];
+    for (unsigned int i = 0; i < other.m; ++i) {
+        data[i] = new int[other.n];                                                    // двумерный массив data
+        for (unsigned int j = 0; j < other.n; ++j)
+            data[i][j] = other.data[i][j];
+    }
+}
+
 int* Matrix::operator[](unsigned int i) {                                     //оператор [], который позволяет получить доступ к строке матрицы по заданному индексу
     return data[i];
 }
@@ -26,32 +35,6 @@ void Matrix::fillRandom() {                                            //мет�
             data[i][j] = rand() % 10;
         }
     }
-}
-
-Matrix Matrix::operator+(const Matrix& other) {
-    if (m == other.m || n == other.n) {
-        Matrix result(m, n);
-        for (unsigned int i = 0; i < m; ++i) {
-            for (unsigned int j = 0; j < n; ++j) {
-                result[i][j] = data[i][j] + other.data[i][j];
-            }
-        }
-        return result;
-    }
-    else std::cout << "Matrix dimensions do not match! \n";
-}
-
-Matrix Matrix::operator-(const Matrix& other) {
-    if (m == other.m || n == other.n) {
-        Matrix result(m, n);
-        for (unsigned int i = 0; i < m; ++i) {
-            for (unsigned int j = 0; j < n; ++j) {
-                result[i][j] = data[i][j] - other.data[i][j];
-            }
-        }
-        return result;
-    }
-    else std::cout << "Matrix dimensions do not match! \n";
 }
 
 Matrix Matrix::operator*(const Matrix& other) {
@@ -82,6 +65,19 @@ Matrix& Matrix::operator+=(const Matrix& other) {  //для добавления
     else std::cout << "Matrix dimensions do not match! \n";
 }
 
+Matrix Matrix::operator+(const Matrix& other) {
+    if (m == other.m || n == other.n) {
+        Matrix result(m, n);
+        for (unsigned int i = 0; i < m; ++i) {
+            for (unsigned int j = 0; j < n; ++j) {
+                result[i][j] = data[i][j] + other.data[i][j];
+            }
+        }
+        return result;
+    }
+    else std::cout << "Matrix dimensions do not match! \n";
+}
+
 Matrix& Matrix::operator-=(const Matrix& other) {  //для вычитания другой матрицы из текущей
     if (m == other.m || n == other.n) {
         for (unsigned int i = 0; i < m; ++i) {
@@ -93,6 +89,12 @@ Matrix& Matrix::operator-=(const Matrix& other) {  //для вычитания �
     }
     else std::cout << "Matrix dimensions do not match! \n";
 }
+
+Matrix Matrix::operator-(const Matrix& other) {
+    Matrix result(*this);
+    return (result -= other);
+}
+
 
 bool Matrix::operator==(const Matrix& other) {  //для сравнения матриц на равенство
     if (m != other.m || n != other.n) {
@@ -126,12 +128,12 @@ std::ostream& operator<<(std::ostream& out, const Matrix& matrix) {  //опер�
 int main() {
     srand(time(0));
 
-    Matrix matrix1(2, 3);
+    Matrix matrix1(3, 3);
     matrix1.fillRandom();
     std::cout << "Matrix 1:" << std::endl;
     std::cout << matrix1 << std::endl;
 
-    Matrix matrix2(2, 3);
+    Matrix matrix2(3, 3);
     matrix2.fillRandom();
     std::cout << "Matrix 2:" << std::endl;
     std::cout << matrix2 << std::endl;
@@ -147,6 +149,10 @@ int main() {
     std::cout << "Product of Matrix 1 and Matrix 2:" << std::endl;
     Matrix product = matrix1 * matrix2;
     std::cout << product << std::endl;
+
+    Matrix chucha(4, 4);
+    chucha.fillRandom();
+    std::cout << chucha << std::endl;
 
     return 0;
 }
